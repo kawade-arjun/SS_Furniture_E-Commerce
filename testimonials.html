@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Reviews & Testimonials | SS Furniture</title>
+  <meta name="description" content="Read real reviews from over 12,000 satisfied homeowners and interior architects who transformed their living spaces with SS Furniture.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-[#FDFBF7] text-[#1A1A1A] antialiased">
+
+  <!-- STICKY NAVIGATION BAR -->
+  <header id="navbar" class="glass-nav fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-700 to-amber-900 flex items-center justify-center text-white font-serif font-bold text-xl shadow-md">
+          SS
+        </div>
+        <div class="flex flex-col">
+          <span class="font-serif font-bold text-xl md:text-2xl tracking-tight text-gray-900">SS Furniture</span>
+          <span class="text-[10px] tracking-widest text-amber-700 uppercase font-semibold -mt-1">Craftsmanship & Luxury</span>
+        </div>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-700">
+        <a href="index.html" class="nav-link hover:text-amber-700 transition-colors">Home</a>
+        <a href="about.html" class="nav-link hover:text-amber-700 transition-colors">About Us</a>
+        <a href="categories.html" class="nav-link hover:text-amber-700 transition-colors">Categories</a>
+        <a href="products.html" class="nav-link hover:text-amber-700 transition-colors">Products</a>
+        <a href="gallery.html" class="nav-link hover:text-amber-700 transition-colors">Gallery</a>
+        <a href="services.html" class="nav-link hover:text-amber-700 transition-colors">Services</a>
+        <a href="testimonials.html" class="nav-link text-amber-700 font-bold hover:text-amber-700 transition-colors">Testimonials</a>
+        <a href="faq.html" class="nav-link hover:text-amber-700 transition-colors">FAQ</a>
+        <a href="contact.html" class="nav-link hover:text-amber-700 transition-colors">Contact</a>
+      </nav>
+
+      <div class="hidden sm:flex items-center gap-4">
+        <a href="tel:+919876543210" class="flex items-center gap-2 text-xs font-bold text-gray-800 bg-amber-50 border border-amber-200 px-3.5 py-2 rounded-full hover:bg-amber-100">
+          +91 98765 43210
+        </a>
+        <a href="contact.html" class="btn-gold text-xs py-2 px-4">Book Visit</a>
+      </div>
+
+      <button id="mobile-menu-btn" class="lg:hidden p-2 text-gray-800">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/60 z-50 hidden backdrop-blur-sm"></div>
+  <div id="mobile-menu-drawer" class="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-[#FDFBF7] z-50 p-6 flex flex-col justify-between translate-x-full transition-transform duration-300">
+    <div>
+      <div class="flex items-center justify-between pb-6 border-b border-gray-200">
+        <span class="font-serif font-bold text-xl text-gray-900">SS Furniture</span>
+        <button id="mobile-menu-close" class="p-2 text-gray-600">&times;</button>
+      </div>
+      <nav class="flex flex-col gap-4 py-6 text-base font-semibold text-gray-800">
+        <a href="index.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="categories.html">Categories</a>
+        <a href="products.html">Products Catalogue</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="services.html">Services</a>
+        <a href="testimonials.html" class="text-amber-700">Testimonials</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+    </div>
+  </div>
+
+
+  <!-- PAGE HERO -->
+  <section class="pt-32 pb-16 bg-gradient-dark text-white text-center">
+    <div class="max-w-4xl mx-auto px-4">
+      <span class="badge-gold">Verified Homeowner Feedback</span>
+      <h1 class="font-serif text-4xl sm:text-5xl font-bold mt-4 mb-4">Customer Reviews</h1>
+      <p class="text-gray-300 text-base max-w-2xl mx-auto">
+        Read experiences from clients who entrusted their living spaces to SS Furniture.
+      </p>
+    </div>
+  </section>
+
+
+  <!-- TESTIMONIALS GRID -->
+  <section class="py-20 bg-gradient-soft">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Review 1 -->
+      <div class="glass-card p-8 space-y-4">
+        <div class="flex items-center gap-1 text-amber-500 text-sm">★★★★★</div>
+        <p class="text-gray-600 text-sm italic leading-relaxed">
+          "The Chesterfield leather sofa set we ordered for our villa is breathtaking! Solid teak wood structure and hand-rubbed leather finish."
+        </p>
+        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Rajesh Sharma" class="w-12 h-12 rounded-full object-cover">
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Rajesh Sharma</h4>
+            <span class="text-xs text-emerald-600 font-semibold">Verified Buyer • Villa Owner</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 2 -->
+      <div class="glass-card p-8 space-y-4">
+        <div class="flex items-center gap-1 text-amber-500 text-sm">★★★★★</div>
+        <p class="text-gray-600 text-sm italic leading-relaxed">
+          "SS Furniture customized an 8-seater Carrara marble dining table to fit our dining space dimensions. Punctual delivery team!"
+        </p>
+        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80" alt="Priya Verma" class="w-12 h-12 rounded-full object-cover">
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Priya Verma</h4>
+            <span class="text-xs text-emerald-600 font-semibold">Verified Buyer • Interior Architect</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 3 -->
+      <div class="glass-card p-8 space-y-4">
+        <div class="flex items-center gap-1 text-amber-500 text-sm">★★★★★</div>
+        <p class="text-gray-600 text-sm italic leading-relaxed">
+          "Bought a hydraulic storage king bed in solid walnut. Sturdy build, smooth hydraulic lifting, and zero creaking noise!"
+        </p>
+        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" alt="Vikram Malhotra" class="w-12 h-12 rounded-full object-cover">
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Vikram Malhotra</h4>
+            <span class="text-xs text-emerald-600 font-semibold">Verified Buyer • Penthouse Owner</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 4 -->
+      <div class="glass-card p-8 space-y-4">
+        <div class="flex items-center gap-1 text-amber-500 text-sm">★★★★★</div>
+        <p class="text-gray-600 text-sm italic leading-relaxed">
+          "The executive ergonomic mesh office chairs we ordered for our firm reduced back fatigue significantly. Exceptional value for money."
+        </p>
+        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" alt="Amit Patel" class="w-12 h-12 rounded-full object-cover">
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Amit Patel</h4>
+            <span class="text-xs text-emerald-600 font-semibold">Verified Buyer • Tech Founder</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 5 -->
+      <div class="glass-card p-8 space-y-4">
+        <div class="flex items-center gap-1 text-amber-500 text-sm">★★★★★</div>
+        <p class="text-gray-600 text-sm italic leading-relaxed">
+          "Their custom furniture online tool made ordering so simple. Sent specs over WhatsApp and got 3D drawings within 24 hours."
+        </p>
+        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" alt="Neha Kapoor" class="w-12 h-12 rounded-full object-cover">
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Neha Kapoor</h4>
+            <span class="text-xs text-emerald-600 font-semibold">Verified Buyer • Apartment Owner</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review 6 -->
+      <div class="glass-card p-8 space-y-4">
+        <div class="flex items-center gap-1 text-amber-500 text-sm">★★★★★</div>
+        <p class="text-gray-600 text-sm italic leading-relaxed">
+          "The Sheesham 6-seater dining set has become the centerpiece of our home. Beautiful natural wood grain finish!"
+        </p>
+        <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80" alt="Siddharth Rao" class="w-12 h-12 rounded-full object-cover">
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Siddharth Rao</h4>
+            <span class="text-xs text-emerald-600 font-semibold">Verified Buyer • Homeowner</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="bg-[#121212] text-gray-400 py-12 border-t border-white/10 text-center text-xs">
+    <p>&copy; 2026 SS Furniture. All rights reserved. <a href="index.html" class="text-amber-400 hover:underline">Back to Homepage</a></p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

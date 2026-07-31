@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Showroom & Installation Gallery | SS Furniture</title>
+  <meta name="description" content="Explore high-resolution photography of SS Furniture installations, luxury living room setups, master bedrooms, and custom teak wood projects.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-[#FDFBF7] text-[#1A1A1A] antialiased">
+
+  <!-- STICKY NAVIGATION BAR -->
+  <header id="navbar" class="glass-nav fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-700 to-amber-900 flex items-center justify-center text-white font-serif font-bold text-xl shadow-md">
+          SS
+        </div>
+        <div class="flex flex-col">
+          <span class="font-serif font-bold text-xl md:text-2xl tracking-tight text-gray-900">SS Furniture</span>
+          <span class="text-[10px] tracking-widest text-amber-700 uppercase font-semibold -mt-1">Craftsmanship & Luxury</span>
+        </div>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-gray-700">
+        <a href="index.html" class="nav-link hover:text-amber-700 transition-colors">Home</a>
+        <a href="about.html" class="nav-link hover:text-amber-700 transition-colors">About Us</a>
+        <a href="categories.html" class="nav-link hover:text-amber-700 transition-colors">Categories</a>
+        <a href="products.html" class="nav-link hover:text-amber-700 transition-colors">Products</a>
+        <a href="gallery.html" class="nav-link text-amber-700 font-bold hover:text-amber-700 transition-colors">Gallery</a>
+        <a href="services.html" class="nav-link hover:text-amber-700 transition-colors">Services</a>
+        <a href="testimonials.html" class="nav-link hover:text-amber-700 transition-colors">Testimonials</a>
+        <a href="faq.html" class="nav-link hover:text-amber-700 transition-colors">FAQ</a>
+        <a href="contact.html" class="nav-link hover:text-amber-700 transition-colors">Contact</a>
+      </nav>
+
+      <div class="hidden sm:flex items-center gap-4">
+        <a href="tel:+919876543210" class="flex items-center gap-2 text-xs font-bold text-gray-800 bg-amber-50 border border-amber-200 px-3.5 py-2 rounded-full hover:bg-amber-100">
+          +91 98765 43210
+        </a>
+        <a href="contact.html" class="btn-gold text-xs py-2 px-4">Book Visit</a>
+      </div>
+
+      <button id="mobile-menu-btn" class="lg:hidden p-2 text-gray-800">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/60 z-50 hidden backdrop-blur-sm"></div>
+  <div id="mobile-menu-drawer" class="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-[#FDFBF7] z-50 p-6 flex flex-col justify-between translate-x-full transition-transform duration-300">
+    <div>
+      <div class="flex items-center justify-between pb-6 border-b border-gray-200">
+        <span class="font-serif font-bold text-xl text-gray-900">SS Furniture</span>
+        <button id="mobile-menu-close" class="p-2 text-gray-600">&times;</button>
+      </div>
+      <nav class="flex flex-col gap-4 py-6 text-base font-semibold text-gray-800">
+        <a href="index.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="categories.html">Categories</a>
+        <a href="products.html">Products Catalogue</a>
+        <a href="gallery.html" class="text-amber-700">Gallery</a>
+        <a href="services.html">Services</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+    </div>
+  </div>
+
+
+  <!-- PAGE HERO -->
+  <section class="pt-32 pb-16 bg-gradient-dark text-white text-center">
+    <div class="max-w-4xl mx-auto px-4">
+      <span class="badge-gold">Interactive Lightbox Portfolio</span>
+      <h1 class="font-serif text-4xl sm:text-5xl font-bold mt-4 mb-4">Showroom & Home Gallery</h1>
+      <p class="text-gray-300 text-base max-w-2xl mx-auto">
+        Click any project card below to launch full-screen high-resolution view.
+      </p>
+
+      <!-- Gallery Filter Tabs -->
+      <div class="flex justify-center flex-wrap gap-2 mt-8">
+        <button class="gallery-tab px-5 py-2 rounded-full text-xs font-semibold bg-amber-700 text-white shadow-md transition-all" data-gallery="All">All Showcase</button>
+        <button class="gallery-tab px-5 py-2 rounded-full text-xs font-semibold bg-white/20 text-white hover:bg-amber-600 transition-all" data-gallery="Living">Living Room</button>
+        <button class="gallery-tab px-5 py-2 rounded-full text-xs font-semibold bg-white/20 text-white hover:bg-amber-600 transition-all" data-gallery="Bedroom">Bedroom</button>
+        <button class="gallery-tab px-5 py-2 rounded-full text-xs font-semibold bg-white/20 text-white hover:bg-amber-600 transition-all" data-gallery="Dining">Dining</button>
+        <button class="gallery-tab px-5 py-2 rounded-full text-xs font-semibold bg-white/20 text-white hover:bg-amber-600 transition-all" data-gallery="Custom">Custom</button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- GALLERY GRID -->
+  <section class="py-16 bg-gradient-soft min-h-[600px]">
+    <div id="gallery-grid" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Injected by js/gallery-lightbox.js -->
+    </div>
+  </section>
+
+
+  <!-- LIGHTBOX MODAL CONTAINER -->
+  <div id="lightbox-modal" class="lightbox-modal flex-col items-center justify-center p-4">
+    <button id="lightbox-close" class="absolute top-6 right-6 text-white text-3xl font-bold z-10 hover:text-amber-400">&times;</button>
+    <button id="lightbox-prev" class="absolute left-6 top-1/2 -translate-y-1/2 text-white p-3 rounded-full bg-white/10 hover:bg-white/30 z-10">&larr;</button>
+    <button id="lightbox-next" class="absolute right-6 top-1/2 -translate-y-1/2 text-white p-3 rounded-full bg-white/10 hover:bg-white/30 z-10">&rarr;</button>
+    
+    <div class="max-w-4xl max-h-[80vh] overflow-hidden rounded-xl shadow-2xl relative mb-4">
+      <img id="lightbox-img" src="" alt="Gallery View" class="max-h-[75vh] w-auto object-contain mx-auto">
+    </div>
+    <div class="text-center text-white">
+      <h3 id="lightbox-title" class="font-serif text-xl font-bold text-amber-300"></h3>
+      <p id="lightbox-category" class="text-xs text-gray-400 mt-1"></p>
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer class="bg-[#121212] text-gray-400 py-12 border-t border-white/10 text-center text-xs">
+    <p>&copy; 2026 SS Furniture. All rights reserved. <a href="index.html" class="text-amber-400 hover:underline">Back to Homepage</a></p>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/gallery-lightbox.js"></script>
+</body>
+</html>
