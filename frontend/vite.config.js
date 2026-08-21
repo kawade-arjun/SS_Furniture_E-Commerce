@@ -11,6 +11,11 @@ export default defineConfig({
         target: 'http://localhost:5001',
         changeOrigin: true,
         secure: false,
+      },
+      '/admin': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false,
       }
     }
   }

@@ -3,13 +3,21 @@
   "version": "1.0.0",
   "description": "Backend API for SS Furniture E-Commerce",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@adminjs/express": "^6.1.1",
+    "@adminjs/mongoose": "^4.1.0",
+    "adminjs": "^7.8.17",
     "cors": "^2.8.5",
-    "express": "^4.19.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.19.0",
+    "mongoose": "^8.5.3",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
