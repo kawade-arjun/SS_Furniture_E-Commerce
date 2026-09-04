@@ -9,6 +9,10 @@ import connectDB from './config/db.js';
 
 // Mongoose Models
 import Product from './models/Product.js';
+import Category from './models/Category.js';
+import Testimonial from './models/Testimonial.js';
+import Order from './models/Order.js';
+import Subscriber from './models/Subscriber.js';
 import Gallery from './models/Gallery.js';
 import Faq from './models/Faq.js';
 import Inquiry from './models/Inquiry.js';
@@ -19,9 +23,7 @@ const PORT = process.env.PORT || 5001;
 // Connect to MongoDB
 connectDB();
 
-// -------------------------------------------------------------
-// AdminJS Configuration
-// -------------------------------------------------------------
+
 import AdminJS from 'adminjs';
 import AdminJSExpress from '@adminjs/express';
 import * as AdminJSMongoose from '@adminjs/mongoose';
@@ -87,6 +89,53 @@ const adminJsOptions = {
       } 
     },
     { 
+      resource: Category, 
+      options: { 
+        navigation: { name: 'Catalog', icon: 'Grid' },
+        listProperties: ['image', 'name', 'catParam', 'models'],
+        editProperties: ['id', 'name', 'catParam', 'models', 'desc', 'image', 'order'],
+        showProperties: ['id', 'name', 'catParam', 'models', 'desc', 'image', 'order'],
+        properties: {
+          id: { isId: true, description: 'Category identifier code (e.g. cat_sofas)' },
+          desc: { type: 'textarea' }
+        }
+      } 
+    },
+    { 
+      resource: Order, 
+      options: { 
+        navigation: { name: 'E-Commerce', icon: 'DollarSign' },
+        listProperties: ['orderId', 'totalAmount', 'status', 'paymentMethod', 'paymentStatus', 'createdAt'],
+        showProperties: ['orderId', 'customer', 'items', 'totalAmount', 'status', 'paymentMethod', 'paymentStatus', 'notes', 'createdAt'],
+        editProperties: ['status', 'paymentStatus', 'notes'],
+        properties: {
+          orderId: { isId: true },
+          notes: { type: 'textarea' }
+        }
+      } 
+    },
+    { 
+      resource: Testimonial, 
+      options: { 
+        navigation: { name: 'Feedback', icon: 'Star' },
+        listProperties: ['img', 'author', 'role', 'stars', 'isFeatured'],
+        editProperties: ['id', 'author', 'role', 'stars', 'quote', 'img', 'isFeatured'],
+        showProperties: ['id', 'author', 'role', 'stars', 'quote', 'img', 'isFeatured'],
+        properties: {
+          id: { isId: true },
+          quote: { type: 'textarea' }
+        }
+      } 
+    },
+    { 
+      resource: Subscriber, 
+      options: { 
+        navigation: { name: 'Marketing', icon: 'UserCheck' },
+        listProperties: ['email', 'isActive', 'createdAt'],
+        editProperties: ['email', 'isActive'],
+      } 
+    },
+    { 
       resource: Inquiry, 
       options: { 
         navigation: { name: 'Customer Messages', icon: 'Mail' },
@@ -147,7 +196,7 @@ const adminRouter = AdminJSExpress.buildAuthenticatedRouter(admin, {
 
 // Mount the AdminJS router BEFORE mounting other body parsers to prevent multer conflicts
 app.use(admin.options.rootPath, adminRouter);
-// -------------------------------------------------------------
+
 
 // Middleware for general API routes
 app.use(cors());
@@ -238,6 +287,113 @@ app.post('/api/custom-quotes', async (req, res) => {
   } catch (error) {
     console.error('Error saving custom quote in MongoDB:', error);
     res.status(500).json({ error: 'Server error saving custom quote' });
+  }
+});
+
+// 6. Get Categories
+app.get('/api/categories', async (req, res) => {
+  try {
+    const categories = await Category.find({}).sort({ order: 1 });
+    res.json(categories);
+  } catch (error) {
+    console.error('Error fetching categories from MongoDB:', error);
+    res.status(500).json({ error: 'Server error fetching categories' });
+  }
+});
+
+// 7. Get Testimonials
+app.get('/api/testimonials', async (req, res) => {
+  try {
+    const testimonials = await Testimonial.find({ isFeatured: true }).sort({ stars: -1, id: 1 });
+    res.json(testimonials);
+  } catch (error) {
+    console.error('Error fetching testimonials from MongoDB:', error);
+    res.status(500).json({ error: 'Server error fetching testimonials' });
+  }
+});
+
+// 8. Submit Customer Testimonial
+app.post('/api/testimonials', async (req, res) => {
+  const { author, role, quote, stars, img } = req.body;
+  if (!author || !quote) {
+    return res.status(400).json({ error: 'Author and quote are required' });
+  }
+  try {
+    const newTestimonial = new Testimonial({
+      id: Date.now(),
+      author,
+      role: role || 'Verified Customer',
+      quote,
+      stars: stars || 5,
+      img: img || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+      isFeatured: true,
+    });
+    await newTestimonial.save();
+    res.status(201).json({ message: 'Review submitted successfully', data: newTestimonial });
+  } catch (error) {
+    console.error('Error saving testimonial:', error);
+    res.status(500).json({ error: 'Server error saving testimonial' });
+  }
+});
+
+// 9. Place Customer Order
+app.post('/api/orders', async (req, res) => {
+  const { customer, items, totalAmount, paymentMethod, notes } = req.body;
+  if (!customer || !customer.name || !customer.phone || !items || !items.length) {
+    return res.status(400).json({ error: 'Customer details and at least one item are required to place an order' });
+  }
+
+  try {
+    const orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+    const newOrder = new Order({
+      orderId,
+      customer,
+      items,
+      totalAmount: totalAmount || 'Contact for Price',
+      paymentMethod: paymentMethod || 'Cash on Delivery',
+      notes,
+    });
+
+    await newOrder.save();
+    res.status(201).json({ message: 'Order placed successfully', orderId, order: newOrder });
+  } catch (error) {
+    console.error('Error creating order in MongoDB:', error);
+    res.status(500).json({ error: 'Server error creating order' });
+  }
+});
+
+// 10. Get Order by Order ID
+app.get('/api/orders/:orderId', async (req, res) => {
+  try {
+    const order = await Order.findOne({ orderId: req.params.orderId });
+    if (!order) {
+      return res.status(400).json({ error: 'Order not found' });
+    }
+    res.json(order);
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    res.status(500).json({ error: 'Server error fetching order' });
+  }
+});
+
+// 11. Subscribe to Newsletter
+app.post('/api/newsletter', async (req, res) => {
+  const { email } = req.body;
+  if (!email || !email.includes('@')) {
+    return res.status(400).json({ error: 'Valid email is required' });
+  }
+
+  try {
+    const existing = await Subscriber.findOne({ email });
+    if (existing) {
+      return res.status(200).json({ message: 'You are already subscribed!' });
+    }
+    const sub = new Subscriber({ email });
+    await sub.save();
+    res.status(201).json({ message: 'Subscribed successfully to SS Furniture updates!' });
+  } catch (error) {
+    console.error('Error saving newsletter subscriber:', error);
+    res.status(500).json({ error: 'Server error subscribing to newsletter' });
   }
 });
 

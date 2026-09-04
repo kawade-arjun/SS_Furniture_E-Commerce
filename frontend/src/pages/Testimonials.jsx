@@ -46,6 +46,24 @@ const REVIEWS_DATA = [
 ];
 
 export default function Testimonials() {
+  const [reviews, setReviews] = React.useState(REVIEWS_DATA);
+
+  React.useEffect(() => {
+    fetch('/api/testimonials')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch');
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setReviews(data);
+        }
+      })
+      .catch(err => {
+        console.warn('Using local reviews fallback:', err);
+      });
+  }, []);
+
   return (
     <div>
       {/* PAGE HERO */}
@@ -62,7 +80,7 @@ export default function Testimonials() {
       {/* TESTIMONIALS GRID */}
       <section className="py-20 bg-gradient-soft">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {REVIEWS_DATA.map((r, idx) => (
+          {reviews.map((r, idx) => (
             <div key={idx} className="glass-card p-8 space-y-4 text-left flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="flex items-center gap-1 text-amber-500 text-sm">

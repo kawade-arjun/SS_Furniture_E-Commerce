@@ -1,0 +1,74 @@
+[
+  {
+    "id": "cat_sofas",
+    "name": "Sofa Sets & Sectionals",
+    "catParam": "Sofa Sets",
+    "models": "12+ Models",
+    "desc": "Chesterfields, L-shaped sectionals, velvet armchairs, and recliner sofas.",
+    "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+    "order": 1
+  },
+  {
+    "id": "cat_beds",
+    "name": "Solid Wood Beds",
+    "catParam": "Beds",
+    "models": "15+ Models",
+    "desc": "Hydraulic storage beds, upholstered king frames, and walnut poster beds.",
+    "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80",
+    "order": 2
+  },
+  {
+    "id": "cat_dining",
+    "name": "Dining Tables & Sets",
+    "catParam": "Dining Tables",
+    "models": "10+ Models",
+    "desc": "Italian marble tops, 6 & 8-seater Sheesham tables, and breakfast counters.",
+    "image": "https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=800&q=80",
+    "order": 3
+  },
+  {
+    "id": "cat_wardrobes",
+    "name": "Wardrobes & Storage",
+    "catParam": "Wardrobes",
+    "models": "8+ Models",
+    "desc": "Sliding glass door wardrobes, walk-in closets, and fitted armoires.",
+    "image": "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=800&q=80",
+    "order": 4
+  },
+  {
+    "id": "cat_tv",
+    "name": "TV Units & Consoles",
+    "catParam": "TV Units",
+    "models": "9+ Models",
+    "desc": "Floating media consoles, backlight wall panels, and audio racks.",
+    "image": "https://images.unsplash.com/photo-1593696140826-c58b021acf8b?auto=format&fit=crop&w=800&q=80",
+    "order": 5
+  },
+  {
+    "id": "cat_office",
+    "name": "Executive Office Setup",
+    "catParam": "Office Furniture",
+    "models": "14+ Models",
+    "desc": "Ergonomic mesh chairs, walnut executive desks, and conference tables.",
+    "image": "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&w=800&q=80",
+    "order": 6
+  },
+  {
+    "id": "cat_modular",
+    "name": "Modular Furniture",
+    "catParam": "Modular Furniture",
+    "models": "7+ Custom Fit-outs",
+    "desc": "Modular kitchens, vanity cabinets, and space-saving wall units.",
+    "image": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80",
+    "order": 7
+  },
+  {
+    "id": "cat_chairs",
+    "name": "Accent Chairs",
+    "catParam": "Chairs",
+    "models": "18+ Styles",
+    "desc": "Velvet lounge armchairs, wingback reading chairs, and rocking chairs.",
+    "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80",
+    "order": 8
+  }
+]

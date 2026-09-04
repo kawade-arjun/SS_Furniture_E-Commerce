@@ -75,6 +75,26 @@ const CATEGORIES_DATA = [
 ];
 
 export default function Categories() {
+  const [categories, setCategories] = React.useState(CATEGORIES_DATA);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    fetch('/api/categories')
+      .then(res => {
+        if (!res.ok) throw new Error('Network error');
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setCategories(data);
+        }
+      })
+      .catch(err => {
+        console.warn('Using local categories fallback:', err);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div>
       {/* PAGE HERO */}
@@ -83,7 +103,7 @@ export default function Categories() {
           <span className="badge-gold">Core Collections</span>
           <h1 className="font-serif text-4xl sm:text-5xl font-bold mt-4 mb-4">Product Categories</h1>
           <p className="text-gray-300 text-base max-w-2xl mx-auto">
-            Explore all 10 specialized furniture divisions handcrafted by SS Furniture.
+            Explore all specialized furniture divisions handcrafted by SS Furniture.
           </p>
         </div>
       </section>
@@ -91,7 +111,7 @@ export default function Categories() {
       {/* CATEGORIES GRID */}
       <section className="py-20 bg-gradient-soft">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {CATEGORIES_DATA.map((cat, idx) => (
+          {categories.map((cat, idx) => (
             <div key={idx} className="glass-card overflow-hidden group text-left">
               <div className="h-56 overflow-hidden relative">
                 <img

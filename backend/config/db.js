@@ -4,14 +4,17 @@ dotenv.config();
 
 async function connectDB() {
   try {
-    const connString = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ss_furniture';
-    console.log(`Connecting to MongoDB at: ${connString}...`);
+    const connString = process.env.MONGODB_URI;
+    if (!connString) {
+      throw new Error('MONGODB_URI is not defined in environment variables. Please set your MongoDB Atlas cloud URI in .env');
+    }
+    console.log(`Connecting to Cloud MongoDB at: ${connString.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@')}...`);
     
     await mongoose.connect(connString);
     
-    console.log('MongoDB connected successfully.');
+    console.log('Cloud MongoDB connected successfully.');
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    console.error('MongoDB connection error:', error.message || error);
     process.exit(1);
   }
 }
