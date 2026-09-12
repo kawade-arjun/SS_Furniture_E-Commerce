@@ -4,6 +4,7 @@ import { useToast } from '../context/ToastContext';
 import HeroSlider from '../components/HeroSlider';
 import CustomizerSection from '../components/CustomizerSection';
 import QuickViewModal from '../components/QuickViewModal';
+import { matchCategory, matchSearch } from '../utils/filterUtils';
 
 export default function Home() {
   const { showToast } = useToast();
@@ -29,8 +30,11 @@ export default function Home() {
     fetch('/api/products')
       .then((res) => res.json())
       .then((data) => {
-        setProducts(data);
-        setFilteredProducts(data.slice(0, 8)); // Initial limit on home page
+        const valid = Array.isArray(data)
+          ? data.filter((p) => p && p.name && p.price && p.image)
+          : [];
+        setProducts(valid);
+        setFilteredProducts(valid.slice(0, 8)); // Initial limit on home page
         setLoading(false);
       })
       .catch((err) => {
@@ -42,22 +46,21 @@ export default function Home() {
   useEffect(() => {
     let result = products;
 
-    if (activeCategory !== 'All') {
-      result = result.filter((p) => p.category === activeCategory);
+    if (activeCategory && activeCategory !== 'All') {
+      result = result.filter((p) => matchCategory(p.category, activeCategory));
     }
 
-    if (searchQuery.trim() !== '') {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q)
-      );
+    if (searchQuery && searchQuery.trim() !== '') {
+      result = result.filter((p) => matchSearch(p, searchQuery));
     }
 
     setFilteredProducts(result.slice(0, 8));
   }, [activeCategory, searchQuery, products]);
+
+  const isCatActive = (cat) => {
+    if (cat === 'All') return activeCategory === 'All';
+    return activeCategory === cat || matchCategory(cat, activeCategory);
+  };
 
   const handleInquirySubmit = async (e) => {
     e.preventDefault();
@@ -102,7 +105,7 @@ export default function Home() {
     { name: 'Dining Tables', count: '10+', image: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=600&q=80' },
     { name: 'Wardrobes', count: '8+', image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=600&q=80' },
     { name: 'TV Units', count: '9+', image: 'https://images.unsplash.com/photo-1593696140826-c58b021acf8b?auto=format&fit=crop&w=600&q=80' },
-    { name: 'Office Furniture', count: '14+', image: 'https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Office Furniture', count: '14+', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80' },
     { name: 'Modular Furniture', count: '7+', image: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80' },
     { name: 'Chairs', count: '18+', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=600&q=80' },
     { name: 'Center Tables', count: '11+', image: 'https://images.unsplash.com/photo-1533779283484-8ad4940aa3a8?auto=format&fit=crop&w=600&q=80' },
@@ -249,7 +252,14 @@ export default function Home() {
               to={`/products?category=${encodeURIComponent(c.name)}`}
               className="category-card aspect-square block group"
             >
-              <img src={c.image} alt={c.name} className="w-full h-full object-cover" />
+              <img
+                src={c.image}
+                alt={c.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80';
+                }}
+              />
               <div className="overlay absolute inset-0 p-4 flex flex-col justify-end text-white">
                 <span className="text-xs text-amber-300 font-semibold">{c.count} Designs</span>
                 <h3 className="font-serif text-lg font-bold">{c.name}</h3>
@@ -298,7 +308,7 @@ export default function Home() {
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={`px-5 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
-                activeCategory === cat
+                isCatActive(cat)
                   ? 'bg-amber-700 text-white shadow-md'
                   : 'bg-white/80 text-gray-700 hover:bg-amber-50 border border-gray-200'
               }`}
@@ -322,7 +332,14 @@ export default function Home() {
             filteredProducts.map((p) => (
               <div key={p.id} className="product-card glass-card overflow-hidden">
                 <div className="img-container aspect-square bg-gray-100 relative">
-                  <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80';
+                    }}
+                  />
                   {p.badge && (
                     <span className="absolute top-3 left-3 bg-amber-700 text-white text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full">
                       {p.badge}

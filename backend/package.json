@@ -18,6 +18,7 @@
     "express": "^4.19.2",
     "express-session": "^1.19.0",
     "mongoose": "^8.5.3",
+    "multer": "^2.3.0",
     "tslib": "^2.8.1"
   },
   "devDependencies": {

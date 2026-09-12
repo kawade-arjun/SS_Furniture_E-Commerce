@@ -42,7 +42,7 @@ const CATEGORIES_DATA = [
     catParam: 'Office Furniture',
     models: '14+ Models',
     desc: 'Ergonomic mesh chairs, walnut executive desks, and conference tables.',
-    image: 'https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
   },
   {
     name: 'Modular Furniture',
@@ -118,6 +118,9 @@ export default function Categories() {
                   src={cat.image}
                   alt={cat.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  onError={(e) => {
+                    e.target.src = 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80';
+                  }}
                 />
                 <span className="absolute top-3 left-3 badge-gold">{cat.models}</span>
               </div>

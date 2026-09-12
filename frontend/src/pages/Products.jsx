@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import QuickViewModal from '../components/QuickViewModal';
+import { matchCategory, matchSearch } from '../utils/filterUtils';
 
 export default function Products() {
   const location = useLocation();
@@ -28,7 +29,10 @@ export default function Products() {
     fetch('/api/products')
       .then((res) => res.json())
       .then((data) => {
-        setProducts(data);
+        const valid = Array.isArray(data)
+          ? data.filter((p) => p && p.name && p.price && p.image)
+          : [];
+        setProducts(valid);
         setLoading(false);
       })
       .catch((err) => {
@@ -37,26 +41,38 @@ export default function Products() {
       });
   }, []);
 
+  const categoryList = useMemo(() => {
+    const list = ['All'];
+    products.forEach((p) => {
+      if (p.category && typeof p.category === 'string') {
+        const cat = p.category.trim();
+        if (!list.some((existing) => existing !== 'All' && matchCategory(existing, cat))) {
+          list.push(cat);
+        }
+      }
+    });
+    return list;
+  }, [products]);
+
   // Filter products based on search query and category tab selections
   useEffect(() => {
     let result = products;
 
-    if (activeCategory !== 'All') {
-      result = result.filter((p) => p.category === activeCategory);
+    if (activeCategory && activeCategory !== 'All') {
+      result = result.filter((p) => matchCategory(p.category, activeCategory));
     }
 
-    if (searchQuery.trim() !== '') {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q)
-      );
+    if (searchQuery && searchQuery.trim() !== '') {
+      result = result.filter((p) => matchSearch(p, searchQuery));
     }
 
     setFilteredProducts(result);
   }, [activeCategory, searchQuery, products]);
+
+  const isCatActive = (cat) => {
+    if (cat === 'All') return activeCategory === 'All';
+    return activeCategory === cat || matchCategory(cat, activeCategory);
+  };
 
   return (
     <div>
@@ -95,23 +111,12 @@ export default function Products() {
 
           {/* Categories Pills */}
           <div className="overflow-x-auto w-full md:w-auto pb-2 scrollbar-none flex gap-2">
-            {[
-              'All',
-              'Sofa Sets',
-              'Beds',
-              'Dining Tables',
-              'Wardrobes',
-              'TV Units',
-              'Office Furniture',
-              'Chairs',
-              'Center Tables',
-              'Storage Cabinets'
-            ].map((cat) => (
+            {categoryList.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
                 className={`px-5 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                  activeCategory === cat
+                  isCatActive(cat)
                     ? 'bg-amber-700 text-white shadow-md'
                     : 'bg-white text-gray-700 border border-gray-200 hover:bg-amber-50'
                 }`}

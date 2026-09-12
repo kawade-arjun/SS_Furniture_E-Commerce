@@ -1,0 +1,38 @@
+[
+  {
+    "id": "banner_1",
+    "badge": "Handcrafted Perfection",
+    "title": "Redefine Luxury Living With SS Furniture",
+    "description": "Discover bespoke solid wood furniture, artisan Chesterfield sofas, and tailored interior creations built to inspire generations.",
+    "bg": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=2000&q=80",
+    "btnLink": "/products",
+    "btnText": "Explore Collection",
+    "hasCustomizerBtn": true,
+    "order": 1,
+    "isActive": true
+  },
+  {
+    "id": "banner_2",
+    "badge": "Artisan Dining Collection",
+    "title": "Gather Around Italian Marble & Teak Elegance",
+    "description": "Transform meal times into regal dining experiences with custom-crafted marble tops and solid Sheesham wood dining suites.",
+    "bg": "https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=2000&q=80",
+    "btnLink": "/products?category=Dining Tables",
+    "btnText": "View Dining Sets",
+    "hasCustomizerBtn": false,
+    "order": 2,
+    "isActive": true
+  },
+  {
+    "id": "banner_3",
+    "badge": "Sanctuary Bedding",
+    "title": "Sleep In Masterpiece Walnut Beds",
+    "description": "Hydraulic storage convenience meets velvet upholstered luxury. Engineered for lifetime structural durability.",
+    "bg": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=2000&q=80",
+    "btnLink": "/products?category=Beds",
+    "btnText": "Browse Bedrooms",
+    "hasCustomizerBtn": false,
+    "order": 3,
+    "isActive": true
+  }
+]

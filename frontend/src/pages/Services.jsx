@@ -26,6 +26,9 @@ export default function Services() {
                 src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=600&q=80"
                 alt="Custom Design"
                 className="w-full h-56 object-cover"
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80';
+                }}
               />
             </div>
             <div className="md:col-span-8 space-y-3">
@@ -47,6 +50,9 @@ export default function Services() {
                 src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=600&q=80"
                 alt="Interior Consultation"
                 className="w-full h-56 object-cover"
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80';
+                }}
               />
             </div>
             <div className="md:col-span-8 space-y-3">
@@ -65,9 +71,12 @@ export default function Services() {
           <div className="glass-card p-8 md:p-10 grid grid-cols-1 md:grid-cols-12 gap-8 items-center text-left">
             <div className="md:col-span-4 rounded-xl overflow-hidden shadow-md">
               <img
-                src="https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&w=600&q=80"
+                src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80"
                 alt="Commercial Fit-outs"
                 className="w-full h-56 object-cover"
+                onError={(e) => {
+                  e.target.src = 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=800&q=80';
+                }}
               />
             </div>
             <div className="md:col-span-8 space-y-3">

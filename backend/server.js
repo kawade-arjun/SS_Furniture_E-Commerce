@@ -3,7 +3,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import multer from 'multer';
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsPath = path.join(__dirname, 'public', 'uploads');
 
 import connectDB from './config/db.js';
 
@@ -16,12 +21,61 @@ import Subscriber from './models/Subscriber.js';
 import Gallery from './models/Gallery.js';
 import Faq from './models/Faq.js';
 import Inquiry from './models/Inquiry.js';
+import Banner from './models/Banner.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB and seed banners if collection is empty
+connectDB().then(async () => {
+  try {
+    const bannerCount = await Banner.countDocuments();
+    if (bannerCount === 0) {
+      const defaultBanners = [
+        {
+          id: 'banner_1',
+          badge: 'Handcrafted Perfection',
+          title: 'Redefine Luxury Living With SS Furniture',
+          description: 'Discover bespoke solid wood furniture, artisan Chesterfield sofas, and tailored interior creations built to inspire generations.',
+          bg: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=2000&q=80',
+          btnLink: '/products',
+          btnText: 'Explore Collection',
+          hasCustomizerBtn: true,
+          order: 1,
+          isActive: true,
+        },
+        {
+          id: 'banner_2',
+          badge: 'Artisan Dining Collection',
+          title: 'Gather Around Italian Marble & Teak Elegance',
+          description: 'Transform meal times into regal dining experiences with custom-crafted marble tops and solid Sheesham wood dining suites.',
+          bg: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=2000&q=80',
+          btnLink: '/products?category=Dining Tables',
+          btnText: 'View Dining Sets',
+          hasCustomizerBtn: false,
+          order: 2,
+          isActive: true,
+        },
+        {
+          id: 'banner_3',
+          badge: 'Sanctuary Bedding',
+          title: 'Sleep In Masterpiece Walnut Beds',
+          description: 'Hydraulic storage convenience meets velvet upholstered luxury. Engineered for lifetime structural durability.',
+          bg: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=2000&q=80',
+          btnLink: '/products?category=Beds',
+          btnText: 'Browse Bedrooms',
+          hasCustomizerBtn: false,
+          order: 3,
+          isActive: true,
+        },
+      ];
+      await Banner.insertMany(defaultBanners);
+      console.log('Default home hero banners initialized in MongoDB Atlas.');
+    }
+  } catch (e) {
+    console.error('Error auto-seeding banners:', e);
+  }
+});
 
 
 import AdminJS from 'adminjs';
@@ -202,16 +256,230 @@ app.use(admin.options.rootPath, adminRouter);
 app.use(cors());
 app.use(express.json());
 
+// Serve uploaded images statically
+app.use('/uploads', express.static(uploadsPath));
+
+// Multer storage setup for local file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsPath);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const cleanName = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9]/g, '-');
+    cb(null, `${cleanName}-${Date.now()}${ext}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files (JPG, PNG, WebP) are allowed!'), false);
+    }
+  }
+});
+
+// File Upload Endpoint (Saves local file and returns public URL)
+app.post('/api/upload', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No image file provided' });
+  }
+  const fileUrl = `/uploads/${req.file.filename}`;
+  res.json({ url: fileUrl, filename: req.file.filename });
+});
+
+// Admin Login Verification Endpoint
+app.post('/api/admin/login', (req, res) => {
+  const { email, password } = req.body;
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@ssfurniture.com';
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+
+  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    return res.json({ success: true, email: ADMIN_EMAIL, token: 'ss_furniture_admin_session' });
+  }
+  return res.status(401).json({ error: 'Invalid admin credentials' });
+});
+
 // API Routes
 
 // 1. Get Products
 app.get('/api/products', async (req, res) => {
   try {
     const products = await Product.find({}).sort({ createdAt: -1 });
-    res.json(products);
+    // Exclude any products whose essential data is not available
+    const availableProducts = products.filter(
+      (p) => p.name && p.name.trim() !== '' && p.price && p.price.trim() !== '' && p.image && p.image.trim() !== ''
+    );
+    res.json(availableProducts);
   } catch (error) {
     console.error('Error fetching products from MongoDB:', error);
     res.status(500).json({ error: 'Server error fetching products' });
+  }
+});
+
+// 1b. Create Product (MongoDB Cloud)
+app.post('/api/products', async (req, res) => {
+  try {
+    const { name, category, price, oldPrice, badge, tag, material, dimensions, image, description } = req.body;
+    if (!name || !category || !price) {
+      return res.status(400).json({ error: 'Name, category, and price are required' });
+    }
+    const customId = req.body.id || `p_${Date.now()}`;
+    const product = new Product({
+      id: customId,
+      name,
+      category,
+      price,
+      oldPrice: oldPrice || '',
+      badge: badge || '',
+      tag: tag || '',
+      material: material || '',
+      dimensions: dimensions || '',
+      image: image || '',
+      description: description || '',
+    });
+    await product.save();
+    console.log(`Product created in Cloud: ${product.name} (${product.id})`);
+    res.status(201).json(product);
+  } catch (err) {
+    console.error('Error creating product:', err);
+    res.status(500).json({ error: 'Failed to create product in database' });
+  }
+});
+
+// 1c. Update Product (MongoDB Cloud)
+app.put('/api/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+    const query = isObjectId ? { $or: [{ _id: id }, { id }] } : { id };
+    
+    const product = await Product.findOneAndUpdate(query, { $set: updateData }, { new: true });
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    console.log(`Product updated in Cloud: ${product.name} (${product.id})`);
+    res.json(product);
+  } catch (err) {
+    console.error('Error updating product:', err);
+    res.status(500).json({ error: 'Failed to update product in database' });
+  }
+});
+
+// 1d. Delete Product (MongoDB Cloud)
+app.delete('/api/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+    const query = isObjectId ? { $or: [{ _id: id }, { id }] } : { id };
+
+    const product = await Product.findOneAndDelete(query);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    console.log(`Product deleted from Cloud: ${product.name} (${product.id})`);
+    res.json({ message: 'Product deleted successfully', id });
+  } catch (err) {
+    console.error('Error deleting product:', err);
+    res.status(500).json({ error: 'Failed to delete product from database' });
+  }
+});
+
+// ==========================================
+// Banners & Hero Ads Endpoints (MongoDB Cloud)
+// ==========================================
+
+// 1e. Get active banners for public homepage
+app.get('/api/banners', async (req, res) => {
+  try {
+    const banners = await Banner.find({ isActive: true }).sort({ order: 1, createdAt: 1 });
+    res.json(banners);
+  } catch (error) {
+    console.error('Error fetching banners from MongoDB:', error);
+    res.status(500).json({ error: 'Server error fetching banners' });
+  }
+});
+
+// 1f. Get all banners (including inactive) for Admin
+app.get('/api/banners/all', async (req, res) => {
+  try {
+    const banners = await Banner.find({}).sort({ order: 1, createdAt: 1 });
+    res.json(banners);
+  } catch (error) {
+    console.error('Error fetching all banners from MongoDB:', error);
+    res.status(500).json({ error: 'Server error fetching banners' });
+  }
+});
+
+// 1g. Create Banner (MongoDB Cloud)
+app.post('/api/banners', async (req, res) => {
+  try {
+    const { title, badge, description, bg, btnLink, btnText, hasCustomizerBtn, order, isActive } = req.body;
+    if (!title || !bg) {
+      return res.status(400).json({ error: 'Title and background image URL/path are required' });
+    }
+    const customId = req.body.id || `banner_${Date.now()}`;
+    const banner = new Banner({
+      id: customId,
+      title,
+      badge: badge || 'Special Offer',
+      description: description || '',
+      bg,
+      btnLink: btnLink || '/products',
+      btnText: btnText || 'Explore Collection',
+      hasCustomizerBtn: Boolean(hasCustomizerBtn),
+      order: Number(order) || 0,
+      isActive: isActive !== false,
+    });
+    await banner.save();
+    console.log(`Banner created in Cloud: ${banner.title} (${banner.id})`);
+    res.status(201).json(banner);
+  } catch (err) {
+    console.error('Error creating banner:', err);
+    res.status(500).json({ error: 'Failed to create banner in database' });
+  }
+});
+
+// 1h. Update Banner (MongoDB Cloud)
+app.put('/api/banners/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+    const query = isObjectId ? { $or: [{ _id: id }, { id }] } : { id };
+
+    const banner = await Banner.findOneAndUpdate(query, { $set: req.body }, { new: true });
+    if (!banner) {
+      return res.status(404).json({ error: 'Banner not found' });
+    }
+    console.log(`Banner updated in Cloud: ${banner.title} (${banner.id})`);
+    res.json(banner);
+  } catch (err) {
+    console.error('Error updating banner:', err);
+    res.status(500).json({ error: 'Failed to update banner in database' });
+  }
+});
+
+// 1i. Delete Banner (MongoDB Cloud)
+app.delete('/api/banners/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+    const query = isObjectId ? { $or: [{ _id: id }, { id }] } : { id };
+
+    const banner = await Banner.findOneAndDelete(query);
+    if (!banner) {
+      return res.status(404).json({ error: 'Banner not found' });
+    }
+    console.log(`Banner deleted from Cloud: ${banner.title} (${banner.id})`);
+    res.json({ message: 'Banner deleted successfully', id });
+  } catch (err) {
+    console.error('Error deleting banner:', err);
+    res.status(500).json({ error: 'Failed to delete banner from database' });
   }
 });
 
@@ -398,8 +666,6 @@ app.post('/api/newsletter', async (req, res) => {
 });
 
 // Serve static assets in production if frontend/dist folder exists
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
 
 app.use(express.static(frontendDistPath));

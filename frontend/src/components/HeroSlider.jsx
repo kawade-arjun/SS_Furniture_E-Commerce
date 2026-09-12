@@ -32,15 +32,31 @@ const SLIDES_DATA = [
 ];
 
 export default function HeroSlider() {
+  const [slides, setSlides] = useState(SLIDES_DATA);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const intervalRef = useRef(null);
   const INTERVAL_TIME = 5500;
 
+  useEffect(() => {
+    fetch('/api/banners')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setSlides(data);
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not fetch custom banners, using default slides:', err);
+      });
+  }, []);
+
+  const totalSlides = slides.length || 1;
+
   const startAutoSlide = () => {
     stopAutoSlide();
     intervalRef.current = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % SLIDES_DATA.length);
+      setCurrentIndex((prev) => (prev + 1) % totalSlides);
     }, INTERVAL_TIME);
   };
 
@@ -51,20 +67,26 @@ export default function HeroSlider() {
   };
 
   useEffect(() => {
-    if (!isHovered) {
+    if (currentIndex >= totalSlides) {
+      setCurrentIndex(0);
+    }
+  }, [totalSlides, currentIndex]);
+
+  useEffect(() => {
+    if (!isHovered && totalSlides > 1) {
       startAutoSlide();
     } else {
       stopAutoSlide();
     }
     return () => stopAutoSlide();
-  }, [isHovered, currentIndex]);
+  }, [isHovered, currentIndex, totalSlides]);
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + SLIDES_DATA.length) % SLIDES_DATA.length);
+    setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % SLIDES_DATA.length);
+    setCurrentIndex((prev) => (prev + 1) % totalSlides);
   };
 
   const scrollToCustomizer = (e) => {
@@ -82,9 +104,9 @@ export default function HeroSlider() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {SLIDES_DATA.map((slide, idx) => (
+      {slides.map((slide, idx) => (
         <div
-          key={idx}
+          key={slide.id || idx}
           className={`hero-slide absolute inset-0 ${
             idx === currentIndex ? 'active' : ''
           }`}
@@ -112,8 +134,8 @@ export default function HeroSlider() {
                 {slide.description}
               </p>
               <div className="flex flex-wrap gap-4 pt-2">
-                <Link to={slide.btnLink} className="btn-gold text-sm py-3.5 px-8">
-                  {slide.btnText}
+                <Link to={slide.btnLink || '/products'} className="btn-gold text-sm py-3.5 px-8">
+                  {slide.btnText || 'Explore Collection'}
                 </Link>
                 {slide.hasCustomizerBtn && (
                   <a
@@ -131,38 +153,42 @@ export default function HeroSlider() {
       ))}
 
       {/* Slider Controls */}
-      <button
-        onClick={handlePrev}
-        className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center transition-all z-20"
-        aria-label="Previous Slide"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-      <button
-        onClick={handleNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center transition-all z-20"
-        aria-label="Next Slide"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-
-      {/* Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
-        {SLIDES_DATA.map((_, idx) => (
+      {totalSlides > 1 && (
+        <>
           <button
-            key={idx}
-            onClick={() => setCurrentIndex(idx)}
-            className={`hero-dot rounded-full transition-all ${
-              idx === currentIndex ? 'bg-amber-500 w-8 h-3' : 'bg-white/50 w-3 h-3'
-            }`}
-            aria-label={`Go to slide ${idx + 1}`}
-          ></button>
-        ))}
-      </div>
+            onClick={handlePrev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center transition-all z-20"
+            aria-label="Previous Slide"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={handleNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/30 backdrop-blur-md text-white flex items-center justify-center transition-all z-20"
+            aria-label="Next Slide"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Indicators */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`hero-dot rounded-full transition-all ${
+                  idx === currentIndex ? 'bg-amber-500 w-8 h-3' : 'bg-white/50 w-3 h-3'
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              ></button>
+            ))}
+          </div>
+        </>
+      )}
     </section>
   );
 }

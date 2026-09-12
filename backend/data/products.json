@@ -45,21 +45,6 @@
     "description": "Opulent solid walnut bed with integrated ambient LED lighting, cushioned velvet headboard, and hidden storage drawers."
   },
   {
-    "id": "p4",
-    "name": "Aura Upholstered Hydraulic Queen Bed",
-    "category": "Beds",
-    "price": "₹59,500",
-    "oldPrice": "₹69,000",
-    "badge": "Trending",
-    "tag": "Bedroom",
-    "rating": 4.7,
-    "reviewsCount": 31,
-    "dimensions": "64\"W x 82\"L x 48\"H",
-    "material": "Hydraulic Storage Frame & Breathable Microfiber",
-    "image": "https://images.unsplash.com/photo-1540518614846-7ede433c517a?auto=format&fit=crop&w=1000&q=80",
-    "description": "Space-saving hydraulic lift storage bed wrapped in rich beige suede upholstery with padded geometric headboard."
-  },
-  {
     "id": "p5",
     "name": "Grand Marble Top 8-Seater Dining Table",
     "category": "Dining Tables",
@@ -118,21 +103,6 @@
     "material": "Engineered Teak Veneer & Slate Accent Panel",
     "image": "https://images.unsplash.com/photo-1593696140826-c58b021acf8b?auto=format&fit=crop&w=1000&q=80",
     "description": "Contemporary TV wall console featuring concealed cable channels, floating shelving units, and ambient backlighting."
-  },
-  {
-    "id": "p9",
-    "name": "Executive Ergonomic Mesh Office Chair",
-    "category": "Office Furniture",
-    "price": "₹18,900",
-    "oldPrice": "₹24,000",
-    "badge": "Best Seller",
-    "tag": "Office",
-    "rating": 4.9,
-    "reviewsCount": 88,
-    "dimensions": "26\"W x 26\"D x 46-52\"H",
-    "material": "Breathable Mesh & Aluminum Heavy Base",
-    "image": "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?auto=format&fit=crop&w=1000&q=80",
-    "description": "Premium ergonomic desk chair with 4D adjustable armrests, synchronized tilt lock, and dynamic lumbar support."
   },
   {
     "id": "p10",
