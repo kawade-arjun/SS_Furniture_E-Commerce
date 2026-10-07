@@ -228,7 +228,8 @@ npm run dev
 - **Backend**: Node.js (ES Modules), Express.js 4, Mongoose 8
 - **Admin Engine**: AdminJS v7, `@adminjs/express`, `@adminjs/mongoose`
 - **Database**: MongoDB Atlas (Cloud Database-as-a-Service)
-- **Dev Tools**: Nodemon, Concurrently
+- **Dev Tools**: Nodemon, Concurrently   
+
 
 ---
 
