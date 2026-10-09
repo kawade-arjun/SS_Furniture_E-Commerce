@@ -228,6 +228,29 @@ const adminJsOptions = {
   }
 };
 
+// Disable AdminJS runtime Rollup/Babel bundling in production to prevent ERR_MODULE_NOT_FOUND
+process.env.ADMIN_JS_SKIP_BUNDLE = 'true';
+
+// Pre-create .adminjs bundle files in working directory and backend directory
+[process.cwd(), path.join(__dirname, '..'), __dirname].forEach((baseDir) => {
+  try {
+    const dir = path.resolve(baseDir, '.adminjs');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    const bundleFile = path.join(dir, 'bundle.js');
+    if (!fs.existsSync(bundleFile)) {
+      fs.writeFileSync(bundleFile, 'AdminJS.UserComponents = {};\n');
+    }
+    const entryFile = path.join(dir, 'entry.js');
+    if (!fs.existsSync(entryFile)) {
+      fs.writeFileSync(entryFile, 'AdminJS.UserComponents = {};\n');
+    }
+  } catch (err) {
+    console.warn('Notice: Could not pre-create .adminjs cache dir:', err.message);
+  }
+});
+
 const admin = new AdminJS(adminJsOptions);
 
 // Build the authenticated router
