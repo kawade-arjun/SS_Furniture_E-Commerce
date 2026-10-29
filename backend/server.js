@@ -5,10 +5,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
 import fs from 'fs';
-dotenv.config();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+dotenv.config();
+if (!process.env.ADMIN_EMAIL) {
+  dotenv.config({ path: path.join(__dirname, '.env') });
+}
 const uploadsPath = path.join(__dirname, 'public', 'uploads');
 if (!fs.existsSync(uploadsPath)) {
   fs.mkdirSync(uploadsPath, { recursive: true });
@@ -26,6 +28,7 @@ import Gallery from './models/Gallery.js';
 import Faq from './models/Faq.js';
 import Inquiry from './models/Inquiry.js';
 import Banner from './models/Banner.js';
+import Review from './models/Review.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -207,6 +210,21 @@ const adminJsOptions = {
           id: { isId: true },
           type: { description: 'Inquiry type (general or custom_quote)' },
           message: { type: 'textarea' }
+        }
+      } 
+    },
+    { 
+      resource: Review, 
+      options: { 
+        navigation: { name: 'Customer Feedback', icon: 'Star' },
+        listProperties: ['productId', 'name', 'rating', 'comment', 'isApproved', 'createdAt'],
+        editProperties: ['name', 'rating', 'comment', 'isApproved'],
+        showProperties: ['productId', 'name', 'email', 'rating', 'comment', 'isApproved', 'createdAt'],
+        filterProperties: ['productId', 'rating', 'isApproved'],
+        properties: {
+          comment: { type: 'textarea', description: 'Customer review text' },
+          rating: { description: 'Rating score from 1 to 5 stars' },
+          isApproved: { description: 'Toggle to publish or hide this review on the storefront' }
         }
       } 
     }
@@ -414,6 +432,94 @@ app.delete('/api/products/:id', async (req, res) => {
   } catch (err) {
     console.error('Error deleting product:', err);
     res.status(500).json({ error: 'Failed to delete product from database' });
+  }
+});
+
+// ==========================================
+// Product Reviews Endpoints (Guest / Public)
+// ==========================================
+
+// 1. Get approved reviews for a product
+app.get('/api/products/:id/reviews', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+    const productQuery = isObjectId ? { $or: [{ _id: id }, { id }] } : { id };
+    const product = await Product.findOne(productQuery);
+    const searchId = product ? product.id : id;
+
+    const reviews = await Review.find({
+      $or: [{ productId: searchId }, { productId: id }],
+      isApproved: true,
+    }).sort({ createdAt: -1 });
+
+    res.json(reviews);
+  } catch (error) {
+    console.error('Error fetching product reviews:', error);
+    res.status(500).json({ error: 'Server error fetching reviews' });
+  }
+});
+
+// 2. Submit a new guest review for a product
+app.post('/api/products/:id/reviews', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, rating, comment } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'Reviewer name is required.' });
+    }
+    const numRating = Number(rating);
+    if (!numRating || numRating < 1 || numRating > 5) {
+      return res.status(400).json({ error: 'Rating must be a number between 1 and 5 stars.' });
+    }
+    if (!comment || !comment.trim()) {
+      return res.status(400).json({ error: 'Review comment cannot be empty.' });
+    }
+
+    // Find target product
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+    const productQuery = isObjectId ? { $or: [{ _id: id }, { id }] } : { id };
+    const product = await Product.findOne(productQuery);
+    const targetProductId = product ? product.id : id;
+
+    // Create review
+    const newReview = new Review({
+      productId: targetProductId,
+      name: name.trim(),
+      email: (email || '').trim(),
+      rating: numRating,
+      comment: comment.trim(),
+      isApproved: true, // Auto-published by default, moderatable in AdminJS
+    });
+    await newReview.save();
+
+    // Recalculate average rating & review count for the product
+    const allApproved = await Review.find({
+      $or: [{ productId: targetProductId }, { productId: id }],
+      isApproved: true,
+    });
+
+    const reviewsCount = allApproved.length;
+    const avgRating = Number((allApproved.reduce((sum, r) => sum + r.rating, 0) / reviewsCount).toFixed(1));
+
+    if (product) {
+      product.rating = avgRating;
+      product.reviewsCount = reviewsCount;
+      await product.save();
+    }
+
+    console.log(`New review submitted for ${targetProductId} by ${name} (${numRating} stars)`);
+
+    res.status(201).json({
+      message: 'Thank you! Your review has been submitted successfully.',
+      review: newReview,
+      updatedRating: avgRating,
+      updatedReviewsCount: reviewsCount,
+    });
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    res.status(500).json({ error: 'Failed to submit review' });
   }
 });
 

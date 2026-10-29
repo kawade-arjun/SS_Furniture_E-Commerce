@@ -177,7 +177,17 @@ export default function Products() {
 
       {/* QUICK VIEW MODAL */}
       {selectedProduct && (
-        <QuickViewModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+        <QuickViewModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onReviewAdded={(productId, newRating, newCount) => {
+            setProducts((prev) =>
+              prev.map((p) =>
+                p.id === productId ? { ...p, rating: newRating, reviewsCount: newCount } : p
+              )
+            );
+          }}
+        />
       )}
     </div>
   );
