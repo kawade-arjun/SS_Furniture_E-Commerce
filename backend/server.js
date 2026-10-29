@@ -713,24 +713,37 @@ app.get('/api/testimonials', async (req, res) => {
   }
 });
 
-// 8. Submit Customer Testimonial
+// 8. Submit Customer Testimonial (Guest / Public Overall Review)
 app.post('/api/testimonials', async (req, res) => {
   const { author, role, quote, stars, img } = req.body;
-  if (!author || !quote) {
-    return res.status(400).json({ error: 'Author and quote are required' });
+  if (!author || !author.trim() || !quote || !quote.trim()) {
+    return res.status(400).json({ error: 'Your name and review text are required.' });
   }
+
+  const numStars = Math.min(5, Math.max(1, Number(stars) || 5));
+
+  // Elegant fallback avatars for customer reviews
+  const defaultAvatars = [
+    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+    'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80',
+  ];
+  const randomAvatar = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
+
   try {
     const newTestimonial = new Testimonial({
       id: Date.now(),
-      author,
-      role: role || 'Verified Customer',
-      quote,
-      stars: stars || 5,
-      img: img || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+      author: author.trim(),
+      role: (role || 'Verified Customer').trim(),
+      quote: quote.trim(),
+      stars: numStars,
+      img: img || randomAvatar,
       isFeatured: true,
     });
     await newTestimonial.save();
-    res.status(201).json({ message: 'Review submitted successfully', data: newTestimonial });
+    console.log(`New overall testimonial submitted by ${author} (${numStars} stars)`);
+    res.status(201).json({ message: 'Thank you! Your testimonial has been published.', testimonial: newTestimonial });
   } catch (error) {
     console.error('Error saving testimonial:', error);
     res.status(500).json({ error: 'Server error saving testimonial' });

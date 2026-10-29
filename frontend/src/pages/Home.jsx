@@ -26,6 +26,24 @@ export default function Home() {
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Home Testimonials State
+  const [testimonials, setTestimonials] = useState([
+    { author: 'Rajesh Sharma', role: 'Villa Owner', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', quote: 'The Chesterfield leather sofa set we ordered for our villa is absolutely breathtaking! Solid wood craftsmanship and super comfortable seating.', stars: 5 },
+    { author: 'Priya Verma', role: 'Interior Architect', img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80', quote: 'SS Furniture customized an 8-seater Carrara marble dining table to fit our exact dining space dimensions. Their delivery team was punctual and helpful!', stars: 5 },
+    { author: 'Vikram Malhotra', role: 'Penthouse Resident', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', quote: 'Bought a hydraulic storage king bed in solid walnut. Super sturdy, smooth hydraulic lifting, and zero creaking sound. Best furniture investment!', stars: 5 }
+  ]);
+
+  useEffect(() => {
+    fetch('/api/testimonials')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setTestimonials(data.slice(0, 3));
+        }
+      })
+      .catch((err) => console.warn('Using fallback testimonials:', err));
+  }, []);
+
   useEffect(() => {
     fetch('/api/products')
       .then((res) => res.json())
@@ -461,23 +479,43 @@ export default function Home() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            { name: 'Rajesh Sharma', role: 'Villa Owner', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80', quote: 'The Chesterfield leather sofa set we ordered for our villa is absolutely breathtaking! Solid wood craftsmanship and super comfortable seating.' },
-            { name: 'Priya Verma', role: 'Interior Architect', img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80', quote: 'SS Furniture customized an 8-seater Carrara marble dining table to fit our exact dining space dimensions. Their delivery team was punctual and helpful!' },
-            { name: 'Vikram Malhotra', role: 'Penthouse Resident', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', quote: 'Bought a hydraulic storage king bed in solid walnut. Super sturdy, smooth hydraulic lifting, and zero creaking sound. Best furniture investment!' }
-          ].map((r, idx) => (
-            <div key={idx} className="glass-card p-8 space-y-4 text-left">
-              <div className="flex items-center gap-1 text-amber-500 text-sm">★★★★★</div>
-              <p className="text-gray-600 text-sm italic leading-relaxed">"{r.quote}"</p>
-              <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
-                <img src={r.img} alt={r.name} className="w-12 h-12 rounded-full object-cover" />
+          {testimonials.map((r, idx) => (
+            <div key={idx} className="glass-card p-8 space-y-4 text-left flex flex-col justify-between hover:shadow-xl transition-all duration-300">
+              <div className="space-y-3">
+                <div className="flex items-center gap-1 text-amber-500 text-sm">
+                  {Array.from({ length: r.stars || 5 }).map((_, i) => (
+                    <span key={i}>★</span>
+                  ))}
+                </div>
+                <p className="text-gray-700 text-sm italic leading-relaxed">
+                  {r.quote.startsWith('"') ? r.quote : `"${r.quote}"`}
+                </p>
+              </div>
+              <div className="flex items-center gap-4 pt-4 border-t border-gray-100 mt-4">
+                {r.img ? (
+                  <img src={r.img} alt={r.author || r.name} className="w-12 h-12 rounded-full object-cover bg-amber-50" />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-900 font-bold flex items-center justify-center text-sm">
+                    {(r.author || r.name || 'C').charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <div>
-                  <h4 className="font-bold text-sm text-gray-900">{r.name}</h4>
-                  <span className="text-xs text-emerald-600 font-semibold">Verified Buyer • {r.role}</span>
+                  <h4 className="font-bold text-sm text-gray-900">{r.author || r.name}</h4>
+                  <span className="text-xs text-emerald-600 font-semibold">Verified Buyer • {r.role || 'Homeowner'}</span>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <Link
+            to="/testimonials"
+            className="btn-gold inline-flex items-center gap-2 px-8 py-3.5 text-xs font-bold uppercase tracking-wider rounded-full shadow-lg hover:shadow-xl transition-all"
+          >
+            <span>Read All Reviews & Share Your Story</span>
+            <span>→</span>
+          </Link>
         </div>
       </section>
 
