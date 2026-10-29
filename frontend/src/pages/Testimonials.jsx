@@ -6,42 +6,36 @@ const REVIEWS_DATA = [
     quote: '"The Chesterfield leather sofa set we ordered for our villa in ECR is breathtaking! Solid teak wood structure and hand-rubbed leather finish."',
     author: 'Karthik Murugan',
     role: 'Villa Owner',
-    img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
   },
   {
     stars: 5,
     quote: '"எங்கள் டைனிங் ரூம் அளவுக்கு சரியாக இருக்கும்படி ஒரு 8-சீட்டர் மார்பிள் டைனிங் டேபிளை SS Furniture செய்து கொடுத்தார்கள். குறித்த நேரத்தில் டெலிவரி செய்தார்கள்!"',
     author: 'Anbuselvi Ramesh',
     role: 'Interior Architect',
-    img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80',
   },
   {
     stars: 5,
     quote: '"Bought a hydraulic storage king bed in solid walnut. Sturdy build, smooth hydraulic lifting, and zero creaking noise!"',
     author: 'Vigneshwaran Sundaram',
     role: 'Penthouse Owner',
-    img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
   },
   {
     stars: 5,
     quote: '"நாங்கள் ஆர்டர் செய்த எக்ஸிகியூட்டிவ் ஆபீஸ் சேர்கள் முதுகு வலியை மிக நன்றாகக் குறைத்துள்ளன. பணத்திற்குச் சிறந்த மதிப்பு."',
     author: 'Senthil Nathan',
     role: 'Tech Founder',
-    img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80',
   },
   {
     stars: 5,
     quote: '"Their custom furniture online tool made ordering so simple. Sent specs over WhatsApp and got 3D drawings within 24 hours."',
     author: 'Divya Bharathi',
     role: 'Apartment Owner',
-    img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
   },
   {
     stars: 5,
     quote: '"The Sheesham 6-seater dining set has become the centerpiece of our home. செம பினிஷிங் மற்றும் தரம் (Awesome finish and quality)"',
     author: 'Ashok Kumar',
     role: 'Homeowner',
-    img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80',
   },
 ];
 
@@ -218,22 +212,14 @@ export default function Testimonials() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-4 pt-4 border-t border-gray-100 mt-4">
-                  {r.img ? (
-                    <img 
-                      src={r.img} 
-                      alt={r.author} 
-                      className="w-12 h-12 rounded-full object-cover bg-amber-100 border border-amber-200"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-900 font-bold flex items-center justify-center text-lg border border-amber-200">
-                      {r.author ? r.author.charAt(0).toUpperCase() : 'C'}
-                    </div>
-                  )}
+                <div className="pt-4 border-t border-gray-100 mt-4 flex items-center justify-between">
                   <div>
                     <h4 className="font-bold text-sm text-gray-900">{r.author}</h4>
-                    <span className="text-xs text-emerald-600 font-semibold">Verified Buyer • {r.role || 'Homeowner'}</span>
+                    <span className="text-xs text-amber-800/80 font-medium">{r.role || 'Verified Customer'}</span>
                   </div>
+                  <span className="text-[10px] uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full font-semibold">
+                    ✓ Verified Buyer
+                  </span>
                 </div>
               </div>
             ))}

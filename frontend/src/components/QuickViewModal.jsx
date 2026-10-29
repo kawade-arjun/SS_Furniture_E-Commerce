@@ -432,14 +432,9 @@ export default function QuickViewModal({ product, onClose, onReviewAdded }) {
                     {reviews.map((rev) => (
                       <div key={rev._id || rev.id || Math.random()} className="p-3.5 bg-white rounded-2xl border border-gray-100 shadow-sm space-y-1.5">
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full bg-amber-100 text-amber-900 font-bold text-xs flex items-center justify-center">
-                              {rev.name ? rev.name.charAt(0).toUpperCase() : 'C'}
-                            </div>
-                            <div>
-                              <p className="text-xs font-bold text-gray-900 leading-none">{rev.name}</p>
-                              {rev.email && <p className="text-[10px] text-gray-400 mt-0.5">{rev.email}</p>}
-                            </div>
+                          <div>
+                            <p className="text-xs font-bold text-gray-900 leading-none">{rev.name}</p>
+                            {rev.email && <p className="text-[10px] text-gray-400 mt-0.5">{rev.email}</p>}
                           </div>
                           <div className="flex text-amber-400 text-xs">
                             {Array.from({ length: 5 }).map((_, i) => (
@@ -447,11 +442,11 @@ export default function QuickViewModal({ product, onClose, onReviewAdded }) {
                             ))}
                           </div>
                         </div>
-                        <p className="text-xs text-gray-700 leading-relaxed pl-9">
+                        <p className="text-xs text-gray-700 leading-relaxed pt-1">
                           "{rev.comment}"
                         </p>
-                        <div className="flex justify-between items-center text-[10px] text-gray-400 pl-9 pt-1">
-                          <span>Verified Customer</span>
+                        <div className="flex justify-between items-center text-[10px] text-gray-400 pt-1 border-t border-gray-50">
+                          <span className="text-emerald-700 font-semibold">✓ Verified Customer</span>
                           <span>{rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recently'}</span>
                         </div>
                       </div>

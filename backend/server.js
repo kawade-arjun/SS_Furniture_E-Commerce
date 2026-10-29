@@ -179,9 +179,9 @@ const adminJsOptions = {
       resource: Testimonial, 
       options: { 
         navigation: { name: 'Feedback', icon: 'Star' },
-        listProperties: ['img', 'author', 'role', 'stars', 'isFeatured'],
-        editProperties: ['id', 'author', 'role', 'stars', 'quote', 'img', 'isFeatured'],
-        showProperties: ['id', 'author', 'role', 'stars', 'quote', 'img', 'isFeatured'],
+        listProperties: ['author', 'role', 'stars', 'isFeatured', 'createdAt'],
+        editProperties: ['id', 'author', 'role', 'stars', 'quote', 'isFeatured'],
+        showProperties: ['id', 'author', 'role', 'stars', 'quote', 'isFeatured', 'createdAt'],
         properties: {
           id: { isId: true },
           quote: { type: 'textarea' }
@@ -744,21 +744,12 @@ app.get('/api/testimonials', async (req, res) => {
 
 // 8. Submit Customer Testimonial (Guest / Public Overall Review)
 app.post('/api/testimonials', async (req, res) => {
-  const { author, role, quote, stars, img } = req.body;
+  const { author, role, quote, stars } = req.body;
   if (!author || !author.trim() || !quote || !quote.trim()) {
     return res.status(400).json({ error: 'Your name and review text are required.' });
   }
 
   const numStars = Math.min(5, Math.max(1, Number(stars) || 5));
-
-  // Elegant fallback avatars for customer reviews
-  const defaultAvatars = [
-    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-    'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80',
-  ];
-  const randomAvatar = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
 
   try {
     const newTestimonial = new Testimonial({
@@ -767,7 +758,7 @@ app.post('/api/testimonials', async (req, res) => {
       role: (role || 'Verified Customer').trim(),
       quote: quote.trim(),
       stars: numStars,
-      img: img || randomAvatar,
+      img: '', // No profile photo
       isFeatured: true,
     });
     await newTestimonial.save();
