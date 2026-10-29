@@ -166,7 +166,11 @@ export default function Products() {
                   <h3 className="font-serif font-bold text-base text-gray-900 truncate">{p.name}</h3>
                   <div className="flex items-baseline justify-between pt-2">
                     <span className="text-lg font-bold text-amber-900">{p.price}</span>
-                    <span className="text-xs text-amber-500 font-semibold">★ {p.rating}</span>
+                    {p.reviewsCount > 0 ? (
+                      <span className="text-xs text-amber-500 font-semibold">★ {p.rating} ({p.reviewsCount})</span>
+                    ) : (
+                      <span className="text-[11px] text-amber-800/70 font-medium">Handcrafted</span>
+                    )}
                   </div>
                 </div>
               </div>

@@ -19,7 +19,7 @@ export default function QuickViewModal({ product, onClose, onReviewAdded }) {
   const [errorMessage, setErrorMessage] = useState('');
 
   // Local copy of product stats so they update instantly upon submission
-  const [currentRating, setCurrentRating] = useState(product.rating || 5);
+  const [currentRating, setCurrentRating] = useState(product.rating || 0);
   const [currentReviewsCount, setCurrentReviewsCount] = useState(product.reviewsCount || 0);
 
   // Fetch reviews when modal opens or when tab changes to reviews
@@ -34,7 +34,16 @@ export default function QuickViewModal({ product, onClose, onReviewAdded }) {
       })
       .then((data) => {
         if (isMounted) {
-          setReviews(data);
+          const validReviews = Array.isArray(data) ? data : [];
+          setReviews(validReviews);
+          // Always use the real count of real reviews from the database
+          setCurrentReviewsCount(validReviews.length);
+          if (validReviews.length > 0) {
+            const avg = Number((validReviews.reduce((sum, r) => sum + r.rating, 0) / validReviews.length).toFixed(1));
+            setCurrentRating(avg);
+          } else {
+            setCurrentRating(0);
+          }
           setLoadingReviews(false);
         }
       })
@@ -174,24 +183,34 @@ export default function QuickViewModal({ product, onClose, onReviewAdded }) {
               className="flex items-center gap-2 mt-2 cursor-pointer group w-fit"
               title="Click to view reviews"
             >
-              <div className="flex text-amber-500">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <svg
-                    key={i}
-                    className={`w-4 h-4 ${
-                      i < Math.floor(currentRating) ? 'fill-current' : 'stroke-current fill-none'
-                    }`}
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div>
-              <span className="font-bold text-gray-900 text-sm">{currentRating}</span>
-              <span className="text-xs text-amber-800 underline group-hover:text-amber-600 transition-colors">
-                ({currentReviewsCount} {currentReviewsCount === 1 ? 'review' : 'reviews'})
-              </span>
+              {currentReviewsCount > 0 ? (
+                <>
+                  <div className="flex text-amber-500">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i < Math.floor(currentRating) ? 'fill-current' : 'stroke-current fill-none'
+                        }`}
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <span className="font-bold text-gray-900 text-sm">{currentRating}</span>
+                  <span className="text-xs text-amber-800 underline group-hover:text-amber-600 transition-colors">
+                    ({currentReviewsCount} {currentReviewsCount === 1 ? 'review' : 'reviews'})
+                  </span>
+                </>
+              ) : (
+                <div className="flex items-center gap-1.5 text-xs text-amber-800 underline group-hover:text-amber-600">
+                  <span className="text-gray-400">☆ No reviews yet</span>
+                  <span className="text-gray-300">•</span>
+                  <span className="font-semibold text-amber-900">Be the first to review</span>
+                </div>
+              )}
             </div>
 
             {/* Pricing */}
@@ -262,12 +281,23 @@ export default function QuickViewModal({ product, onClose, onReviewAdded }) {
                 {/* Reviews Header Banner */}
                 <div className="flex items-center justify-between bg-amber-50/70 p-3.5 rounded-2xl border border-amber-100">
                   <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-2xl font-bold text-amber-950">{currentRating}</span>
-                      <span className="text-amber-500 text-lg">★</span>
-                      <span className="text-xs text-gray-600 font-medium">out of 5 stars</span>
-                    </div>
-                    <p className="text-xs text-gray-500">Based on {currentReviewsCount} customer ratings</p>
+                    {currentReviewsCount > 0 ? (
+                      <>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-2xl font-bold text-amber-950">{currentRating}</span>
+                          <span className="text-amber-500 text-lg">★</span>
+                          <span className="text-xs text-gray-600 font-medium">out of 5 stars</span>
+                        </div>
+                        <p className="text-xs text-gray-500">Based on {currentReviewsCount} verified customer {currentReviewsCount === 1 ? 'review' : 'reviews'}</p>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-sm font-bold text-amber-950">No customer reviews yet</span>
+                        </div>
+                        <p className="text-[11px] text-gray-500">Only authentic customer reviews are displayed here.</p>
+                      </>
+                    )}
                   </div>
                   <button
                     onClick={() => {

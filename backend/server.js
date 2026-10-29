@@ -359,7 +359,36 @@ app.get('/api/products', async (req, res) => {
     const availableProducts = products.filter(
       (p) => p.name && p.name.trim() !== '' && p.price && p.price.trim() !== '' && p.image && p.image.trim() !== ''
     );
-    res.json(availableProducts);
+
+    // Compute real reviews counts & average ratings from the Review collection
+    const reviewsAgg = await Review.aggregate([
+      { $match: { isApproved: true } },
+      {
+        $group: {
+          _id: '$productId',
+          count: { $sum: 1 },
+          avgRating: { $avg: '$rating' }
+        }
+      }
+    ]);
+
+    const reviewMap = {};
+    reviewsAgg.forEach(r => {
+      reviewMap[r._id] = {
+        count: r.count,
+        avgRating: Number(r.avgRating.toFixed(1))
+      };
+    });
+
+    const productsWithRealReviews = availableProducts.map(p => {
+      const pObj = p.toObject ? p.toObject() : { ...p };
+      const realRev = reviewMap[p.id] || reviewMap[String(p._id)];
+      pObj.reviewsCount = realRev ? realRev.count : 0;
+      pObj.rating = realRev ? realRev.avgRating : 0;
+      return pObj;
+    });
+
+    res.json(productsWithRealReviews);
   } catch (error) {
     console.error('Error fetching products from MongoDB:', error);
     res.status(500).json({ error: 'Server error fetching products' });
